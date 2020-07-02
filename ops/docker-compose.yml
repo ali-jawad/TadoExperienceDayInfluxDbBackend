@@ -1,0 +1,8 @@
+version: '2.4'
+services:
+  influxdb:
+    image: influxdb:1.6.6
+    ports:
+      - 8087:8086
+    volumes:
+      - ./influxdb-init:/docker-entrypoint-initdb.d
