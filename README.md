@@ -2,15 +2,15 @@
 
 ## What is this?
 This is a repository by tado to facilitate Experience Days with Software Engineering job candidates.
-It is a backend server application using Grails framework.
-It has a dependency on a timeseries database called InfluxDb, which can be set up with docker.
+It is a backend server application using [Grails framework](https://docs.grails.org/latest/guide/introduction.html).
+It has a dependency on a timeseries database called [InfluxDb](https://www.influxdata.com/products/influxdb), which can be set up with docker.
 
 ## Setting up development environment
 
 ### Pre-requisites
-- `docker` on terminal
-- `docker-compose` on terminal
-- `Intellij IDEA - Ultimate`
+- [docker](https://www.docker.com) on terminal
+- [docker-compose](https://docs.docker.com/compose) on terminal
+- [Intellij IDEA - Ultimate](https://www.jetbrains.com/idea/download)
 
 Docker is needed for InfluxDb dependency, while Ultimate edition of Intellij IDE is needed to support Grails framework.
 
