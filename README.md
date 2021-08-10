@@ -20,7 +20,7 @@ Docker is needed for InfluxDb dependency, while Ultimate edition of Intellij IDE
 
 #### Create a Run Configuration:
 - Run > Edit Configuration > + icon at the top left > Grails
-- Set Application to what you
+- Set Application to ExperienceDay-InfluxDbBackend
 - Set Command line to 'run-app'
 - Tick on 'Launch browser'
 
