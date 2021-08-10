@@ -67,6 +67,11 @@ class BootStrap {
     }
 
     private initZonePoints(Zone zone) {
+        initZonePointsYesterday(zone)
+        initZonePointsToday(zone)
+    }
+
+    private initZonePointsYesterday(Zone zone) {
         use(TimeZoneCategory) {
             zone.yesterdayAt(0).with { Instant writeTime ->
                 tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, off())
@@ -105,11 +110,82 @@ class BootStrap {
         }
     }
 
+    private initZonePointsToday(Zone zone) {
+        use(TimeZoneCategory) {
+            zone.todayAt(0).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, off())
+                tadoInfluxDb.writeZonePoint(zone, writeTime, SCHEDULE_USER_HEATING_SETTING, off())
+                tadoInfluxDb.writeZonePoint(zone, writeTime, TADO_MODE, HOME)
+                tadoInfluxDb.writeZonePoint(zone, writeTime, OVERLAY_TERMINATION_TYPE, Optional.absent())
+            }
+            zone.todayAt(7).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, on(fromCelsius(22)))
+                tadoInfluxDb.writeZonePoint(zone, writeTime, SCHEDULE_USER_HEATING_SETTING, on(fromCelsius(22)))
+            }
+            zone.todayAt(9).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, on(fromCelsius(16)))
+                tadoInfluxDb.writeZonePoint(zone, writeTime, TADO_MODE, AWAY)
+            }
+            zone.todayAt(15).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, on(fromCelsius(22)))
+                tadoInfluxDb.writeZonePoint(zone, writeTime, TADO_MODE, HOME)
+            }
+            zone.todayAt(17).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, on(fromCelsius(19)))
+                tadoInfluxDb.writeZonePoint(zone, writeTime, SCHEDULE_USER_HEATING_SETTING, on(fromCelsius(19)))
+            }
+            zone.todayAt(19).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, on(fromCelsius(20)))
+                tadoInfluxDb.writeZonePoint(zone, writeTime, OVERLAY_TERMINATION_TYPE, Optional.of(MANUAL))
+            }
+            zone.todayAt(20).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, on(fromCelsius(19)))
+                tadoInfluxDb.writeZonePoint(zone, writeTime, OVERLAY_TERMINATION_TYPE, Optional.absent())
+            }
+            zone.todayAt(22).with { Instant writeTime ->
+                if (writeTime > now()) {
+                    return
+                }
+                tadoInfluxDb.writeZonePoint(zone, writeTime, USER_HEATING_SETTING, off())
+                tadoInfluxDb.writeZonePoint(zone, writeTime, SCHEDULE_USER_HEATING_SETTING, off())
+            }
+        }
+    }
+
     static class TimeZoneCategory {
         static Instant yesterdayAt(Zone self, int hour, int minute = 0) {
             return Instant.now().toDateTime(self.home.dateTimeZone)
                           .withTimeAtStartOfDay()
                           .minusDays(1)
+                          .withHourOfDay(hour)
+                          .withMinuteOfHour(minute)
+                          .toInstant()
+        }
+
+        static Instant todayAt(Zone self, int hour, int minute = 0) {
+            return Instant.now().toDateTime(self.home.dateTimeZone)
+                          .withTimeAtStartOfDay()
                           .withHourOfDay(hour)
                           .withMinuteOfHour(minute)
                           .toInstant()
